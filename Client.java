@@ -1,8 +1,11 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress; 
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
 
 public class Client {
     private DatagramSocket datagramSocket;
@@ -35,19 +38,21 @@ public class Client {
                         isConnected = true;
                         System.out.println("Connection to the Message Board Server is successful!");
                     } else {
-                        System.out.println("Error: Invalid command syntax. Usage: /join <server_ip_add> <port>");
+                        System.out.println("Connection to the Message Board Server has failed! Please check IP Address and Port Number.");
                     }
                 }
-                
+                 
                 // Check for other commands or regular messages
                 else if (isConnected){
                     if (messageToSend.startsWith("/leave")){
+                        buffer = messageToSend.getBytes();
                         DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 1234);
                         datagramSocket.send(datagramPacket);
                         datagramSocket.close();
                         isConnected = false;
                         System.out.println("Connection closed. Thank you!");
-                    } else {
+                    }  /* 
+                    else {
                         // Convert message to JSON and send to server
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("username", username);
@@ -62,8 +67,11 @@ public class Client {
                         String messageFromServer = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
                         System.out.println("Server: " + messageFromServer);
                     }
-                } else {
-                    System.out.println("Error: You must connect to the server first. Usage: /join <server_ip_add> <port>");
+                    */
+                } 
+                
+                else {
+                    System.out.println("Error: Disconnection failed. Please connect to the server first.");
                 }
             } catch (IOException e){
                 e.printStackTrace();
@@ -72,7 +80,7 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SocketException, UnknownHostException {
         DatagramSocket datagramSocket = new DatagramSocket();
         InetAddress inetAddress = InetAddress.getByName("localhost");
         Client client = new Client(datagramSocket, inetAddress);

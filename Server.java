@@ -32,9 +32,13 @@ public class Server {
         }
     }
 
-    public static void main(String[] args){
-        DatagramSocket datagramSocket = new DatagramSocket(1234);
-        Server server = new Server(datagramSocket);
-        server.receiveThenSend();
+    public static void main(String[] args) {
+        try {
+            DatagramSocket datagramSocket = new DatagramSocket(1234);
+            Server server = new Server(datagramSocket);
+            server.receiveThenSend();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
     }
 }

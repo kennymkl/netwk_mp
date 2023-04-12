@@ -1,4 +1,6 @@
 def printFromServer(bytesAddressPair):
+    if not joined:
+        return
     convMsg = str(bytesAddressPair[0], encoding)
     jsonMsg = json.loads(convMsg)
     serverMsg = "\n{}".format(jsonMsg["message"])
@@ -125,12 +127,9 @@ def sender():
 
         elif "/leave" in userCommand:
             if joined:
-                #UDPClientSocket.close() # close the socket
                 bytesToSend = leaveComm(userCommand)
                 UDPClientSocket.sendto(bytesToSend, serverAddressPort)
                 joined = False  # set joined flag to False
-                
-                break
             else:
                 print("Error: Disconnection failed. Please connect to the server first.")
 

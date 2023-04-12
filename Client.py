@@ -20,6 +20,7 @@ def joinComm(userCommand):
         return bts, sap
     except:
         print("Error: Command parameters do not match or is not allowed.")
+        return None, None
 
 def leaveComm(userCommand):
     jsonFormat =  { "command":userCommand}
@@ -52,14 +53,17 @@ def msgComm(userCommand):
     return bts
 
 def allComm(userCommand):
-    wholeCommand = str.split(userCommand," ",1)
-    jsonFormat =  { "command":wholeCommand[0], "message":wholeCommand[1]}
+    try:
+        wholeCommand = str.split(userCommand," ",1)
+        jsonFormat =  { "command":wholeCommand[0], "message":wholeCommand[1]}
 
-    # convert into JSON:
-    y = json.dumps(jsonFormat)
-    bts = str.encode(y)                                 # Bytes to Send
+        # convert into JSON:
+        y = json.dumps(jsonFormat)
+        bts = str.encode(y)                                 # Bytes to Send
 
-    return bts
+        return bts
+    except:
+        return None
 
 import socket
 import threading
@@ -131,30 +135,37 @@ def sender():
             
         elif "/register" in userCommand:
             bytesToSend = regComm(userCommand)
-            # Send to server using created UDP socket
-            UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+            if bytesToSend is not None:
+                # Send to server using created UDP socket
+                UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+            else:
+                print("Error: Command parameters do not match or is not allowed.")
 
         elif "/msg" in userCommand:
             bytesToSend = msgComm(userCommand)
-            # Send to server using created UDP socket
-            UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+            if bytesToSend is not None:
+                # Send to server using created UDP socket
+                UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+            else:
+                print("Error: Command parameters do not match or is not allowed.")
 
         elif "/all" in userCommand: 
             bytesToSend = allComm(userCommand)
-            # Send to server using created UDP socket
-            UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+            if bytesToSend is not None:
+                # Send to server using created UDP socket
+                UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+            else:
+                print("Error: Command parameters do not match or is not allowed.")
 
         elif "/?" in userCommand:
             print("------COMMANDS ------")
             print("Connect to the server application: /join <server_ip_add> <port>")
             print("Disconnect to the server application: /leave")
             print("Register a unique handle or alias: /register <handle>")
-            print("Send message to all: /all <message>")
-            print("Send direct messages to a single handle: /msg <handle> <message>")
-            print("Request command help  to ouptut all input syntax commands for references: /?")
-            print("----------------------------")
-            print(" ")
-            
+            print("Send a private message: /msg <handle> <message>")
+            print("Send a message to all connected clients: /all <message>")
+            print("List all connected clients: /list")
+            print("To display help for the commands: /?")
         else:
             print("Error: Command not found.")
 

@@ -144,48 +144,41 @@ def sender():
                 joined = False  # set joined flag to False
             else:
                 print("Error: Disconnection failed. Please connect to the server first.")
-
-            
+                
         elif "/register" in userCommand:
-            Registered = True
-            bytesToSend = regComm(userCommand)
+            if Registered == False:
+                Registered = True
+                bytesToSend = regComm(userCommand)
+                # Send to server using created UDP socket
+                UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+            else:
+                print("This Client is already Registered.")
+            
+  #     elif "/register" in userCommand:
+  #          Registered = True
+  #          bytesToSend = regComm(userCommand)
+  #          if bytesToSend is not None:
+  #              # Send to server using created UDP socket
+  #              UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+  #          else:
+                print("Error: Command parameters do not match or is not allowed.")
+
+        elif "/msg" in userCommand:
+            bytesToSend = msgComm(userCommand)
             if bytesToSend is not None:
                 # Send to server using created UDP socket
                 UDPClientSocket.sendto(bytesToSend, serverAddressPort)
             else:
                 print("Error: Command parameters do not match or is not allowed.")
 
-        elif "/msg" in userCommand:
-            if Registered == True:
-                bytesToSend = msgComm(userCommand)
-                # Send to server using created UDP socket
-                UDPClientSocket.sendto(bytesToSend, serverAddressPort)
-            else:
-                print("You are not yet Registered.")
                 
-   #     elif "/msg" in userCommand:
-   #         bytesToSend = msgComm(userCommand)
-   #         if bytesToSend is not None:
-   #             # Send to server using created UDP socket
-   #             UDPClientSocket.sendto(bytesToSend, serverAddressPort)
-   #         else:
-   #             print("Error: Command parameters do not match or is not allowed.")
-
         elif "/all" in userCommand: 
-            if Registered == True:
-                bytesToSend = allComm(userCommand)
+            bytesToSend = allComm(userCommand)
+            if bytesToSend is not None:
                 # Send to server using created UDP socket
                 UDPClientSocket.sendto(bytesToSend, serverAddressPort)
             else:
-                print("You are not yet Registered.")
-                
-   #     elif "/all" in userCommand: 
-   #         bytesToSend = allComm(userCommand)
-   #         if bytesToSend is not None:
-   #             # Send to server using created UDP socket
-   #             UDPClientSocket.sendto(bytesToSend, serverAddressPort)
-   #         else:
-   #             print("Error: Command parameters do not match or is not allowed.")
+                print("Error: Command parameters do not match or is not allowed.")
 
         elif "/?" in userCommand:
             print("------COMMANDS ------")

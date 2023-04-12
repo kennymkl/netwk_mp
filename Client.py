@@ -42,16 +42,18 @@ def regComm(userCommand):
     return bts
 
 def msgComm(userCommand):
-    wholeCommand = str.split(userCommand," ",2)
-    print(wholeCommand)
-    jsonFormat =  { "command":wholeCommand[0], "handle":wholeCommand[1], "message":wholeCommand[2]}
+    try:
+        wholeCommand = str.split(userCommand," ",2)
+        print(wholeCommand)
+        jsonFormat =  { "command":wholeCommand[0], "handle":wholeCommand[1], "message":wholeCommand[2]}
 
-    # convert into JSON:
-    y = json.dumps(jsonFormat)
-    bts = str.encode(y)                                 # Bytes to Send
+        # convert into JSON:
+        y = json.dumps(jsonFormat)
+        bts = str.encode(y)                                 # Bytes to Send
 
-    return bts
-
+        return bts
+    except:
+        return None
 def allComm(userCommand):
     try:
         wholeCommand = str.split(userCommand," ",1)

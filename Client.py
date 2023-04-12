@@ -117,6 +117,8 @@ while (joined==False):
 
 # Listen for incoming datagrams
 def sender():
+    global Registered
+    Registered = False
     global serverAddressPort
     global joined
 
@@ -145,6 +147,7 @@ def sender():
 
             
         elif "/register" in userCommand:
+            Registered = True
             bytesToSend = regComm(userCommand)
             if bytesToSend is not None:
                 # Send to server using created UDP socket
@@ -153,20 +156,36 @@ def sender():
                 print("Error: Command parameters do not match or is not allowed.")
 
         elif "/msg" in userCommand:
-            bytesToSend = msgComm(userCommand)
-            if bytesToSend is not None:
+            if Registered == True:
+                bytesToSend = msgComm(userCommand)
                 # Send to server using created UDP socket
                 UDPClientSocket.sendto(bytesToSend, serverAddressPort)
             else:
-                print("Error: Command parameters do not match or is not allowed.")
+                print("You are not yet Registered.")
+                
+   #     elif "/msg" in userCommand:
+   #         bytesToSend = msgComm(userCommand)
+   #         if bytesToSend is not None:
+   #             # Send to server using created UDP socket
+   #             UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+   #         else:
+   #             print("Error: Command parameters do not match or is not allowed.")
 
         elif "/all" in userCommand: 
-            bytesToSend = allComm(userCommand)
-            if bytesToSend is not None:
+            if Registered == True:
+                bytesToSend = allComm(userCommand)
                 # Send to server using created UDP socket
                 UDPClientSocket.sendto(bytesToSend, serverAddressPort)
             else:
-                print("Error: Command parameters do not match or is not allowed.")
+                print("You are not yet Registered.")
+                
+   #     elif "/all" in userCommand: 
+   #         bytesToSend = allComm(userCommand)
+   #         if bytesToSend is not None:
+   #             # Send to server using created UDP socket
+   #             UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+   #         else:
+   #             print("Error: Command parameters do not match or is not allowed.")
 
         elif "/?" in userCommand:
             print("------COMMANDS ------")

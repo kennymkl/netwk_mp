@@ -1,3 +1,15 @@
+import socket
+import threading
+import json
+import time
+
+encoding = 'utf-8'
+bufferSize = 1024          
+global serverAddressPort
+joined = False
+
+
+
 def printFromServer(bytesAddressPair):
     if not joined:
         return
@@ -10,6 +22,15 @@ def joinComm(userCommand):
     
     try:
         wholeCommand = str.split(userCommand," ")
+        if len(wholeCommand) != 3:
+            raise ValueError("Invalid number of parameters for /join command.")
+        
+        if wholeCommand[1] != "127.0.0.1":
+            raise ValueError("Invalid IP address. Only connections from localhost are allowed.")
+        
+        if wholeCommand[2] != "12345":
+            raise ValueError("Invalid port number. Please use correct port number.")
+
         jsonFormat =  { "command":wholeCommand[0]}
 
         # convert into JSON:
@@ -17,9 +38,13 @@ def joinComm(userCommand):
         bts = str.encode(y)                                 # Bytes to Send
         sap = (wholeCommand[1], int(wholeCommand[2]))       # Server Address Port
 
-        print(sap)
+        
 
         return bts, sap
+    
+    except ValueError as e:
+        print("Error: " + str(e))
+        return None, None
     except:
         print("Error: Command parameters do not match or is not allowed.")
         return None, None
@@ -69,16 +94,6 @@ def allComm(userCommand):
     except:
         return None
 
-import socket
-import threading
-import json
-import time
-
-encoding = 'utf-8'
-bufferSize = 1024          
-global serverAddressPort
-joined = False
-
 
 # Create a UDP socket at client side
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -90,15 +105,11 @@ while (joined==False):
     if "/join" in userStartCommand:
         try:
             bytesToSend, serverAddressPort = joinComm(userStartCommand)
-
-            # Send to server using created UDP socket
-            print(serverAddressPort)
             UDPClientSocket.sendto(bytesToSend, serverAddressPort)
             joined = True
 
         except:
             print("Error: Connection to the Message Board Server has failed!")
-            print("Please check IP Address and Port Number")
     else:
         print("Error: Command not found.")
 
@@ -122,7 +133,6 @@ def sender():
 
             except:
                 print("Error: Connection to the Message Board Server has failed!")
-                print("Please check IP Address and Port Number")
 
 
         elif "/leave" in userCommand:

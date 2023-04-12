@@ -122,7 +122,7 @@ def sender():
     global serverAddressPort
     global joined
 
-    while(joined):
+    while True:
         userCommand = input("Enter command: ")
 
         if "/join" in userCommand:
@@ -144,7 +144,8 @@ def sender():
                 joined = False  # set joined flag to False
             else:
                 print("Error: Disconnection failed. Please connect to the server first.")
-                
+            joined = False 
+            
         elif "/register" in userCommand:
             if Registered == False:
                 Registered = True

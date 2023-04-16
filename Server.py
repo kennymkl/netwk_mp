@@ -1,12 +1,13 @@
+import socket
+import json
+
+
 def msgToClient(msgFromServer):
     jsonFormat =  {"message":msgFromServer}
     y = json.dumps(jsonFormat)           # convert into JSON:
     bts = str.encode(y)
 
     return bts
-
-import socket
-import json
 
 encoding = 'utf-8'
 
